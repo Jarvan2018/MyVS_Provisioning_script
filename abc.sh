@@ -1,10 +1,11 @@
 #!/bin/bash
 
 #================================================================================
-# Vast.ai ComfyUI 自动化配置脚本 (V3 - 并行优化版)
+# Vast.ai ComfyUI 自动化配置脚本 (V3 - 并行优化版 + 下载进度显示)
 #================================================================================
 # 更新日志:
 # - V3: 将依赖安装和模型下载并行化处理，以大幅缩短准备时间。
+# - V3.1: 添加了下载进度显示，每5%进度打印一次
 #================================================================================
 
 
@@ -55,7 +56,7 @@ echo "✅ 工作区准备完毕。"
 install_dependencies() {
     echo "📦 [任务A] 开始安装 Python 依赖..."
     # 安装一个基础包，以防下载脚本需要
-    pip install huggingface_hub
+    pip install huggingface_hub tqdm
     
     cd /workspace/ComfyUI
     echo "📦 [任务A] 正在安装 ComfyUI 核心依赖..."
@@ -83,26 +84,121 @@ download_models() {
 from huggingface_hub import hf_hub_download
 import sys
 import time
+import os
+from tqdm import tqdm
 
-def download(repo_id, filename, local_dir, repo_type=None):
+class ProgressCallback:
+    def __init__(self, filename):
+        self.filename = filename
+        self.last_printed_percentage = 0
+        
+    def __call__(self, current, total):
+        if total > 0:
+            percentage = int((current / total) * 100)
+            # 每5%打印一次进度
+            if percentage >= self.last_printed_percentage + 5:
+                print(f"📥 [任务B] {self.filename}: {percentage}% 完成 ({current:,}/{total:,} 字节)")
+                self.last_printed_percentage = percentage
+
+def download_with_progress(repo_id, filename, local_dir, repo_type=None):
     try:
-        print(f"⬇️  [任务B]   - 正在下载: {filename}")
-        hf_hub_download(repo_id=repo_id, filename=filename, local_dir=local_dir, repo_type=repo_type)
-        print(f"✅⬇️ [任务B]   - 下载成功: {filename}")
+        print(f"⬇️ [任务B] 开始下载: {filename}")
+        
+        # 创建进度回调
+        progress_callback = ProgressCallback(filename)
+        
+        # 使用huggingface_hub下载，支持断点续传
+        file_path = hf_hub_download(
+            repo_id=repo_id, 
+            filename=filename, 
+            local_dir=local_dir, 
+            repo_type=repo_type,
+            resume_download=True
+        )
+        
+        # 获取文件大小用于显示
+        if os.path.exists(file_path):
+            file_size = os.path.getsize(file_path)
+            print(f"✅⬇️ [任务B] 下载完成: {filename} ({file_size:,} 字节)")
+        else:
+            print(f"✅⬇️ [任务B] 下载完成: {filename}")
+            
     except Exception as e:
-        print(f"❌⬇️ [任务B]   - 下载失败: {filename}. 错误: {e}", file=sys.stderr)
+        print(f"❌⬇️ [任务B] 下载失败: {filename}. 错误: {e}", file=sys.stderr)
 
+def download_with_wget_progress(repo_id, filename, local_dir):
+    """使用wget下载并显示进度条的备用方法"""
+    try:
+        print(f"⬇️ [任务B] 开始下载: {filename}")
+        
+        # 构建HuggingFace文件URL
+        if repo_id.count('/') == 1:
+            url = f"https://huggingface.co/{repo_id}/resolve/main/{filename}"
+        else:
+            url = f"https://huggingface.co/{repo_id}/resolve/main/{filename}"
+        
+        # 确保目录存在
+        os.makedirs(local_dir, exist_ok=True)
+        output_path = os.path.join(local_dir, os.path.basename(filename))
+        
+        # 使用wget下载并显示进度
+        import subprocess
+        cmd = [
+            'wget', 
+            '--progress=bar:force:noscroll',
+            '--continue',  # 支持断点续传
+            '-O', output_path,
+            url
+        ]
+        
+        result = subprocess.run(cmd, capture_output=False, text=True)
+        
+        if result.returncode == 0:
+            file_size = os.path.getsize(output_path)
+            print(f"✅⬇️ [任务B] 下载完成: {filename} ({file_size:,} 字节)")
+        else:
+            raise Exception(f"wget返回错误代码: {result.returncode}")
+            
+    except Exception as e:
+        print(f"❌⬇️ [任务B] wget下载失败: {filename}. 错误: {e}", file=sys.stderr)
+        # 回退到huggingface_hub方法
+        download_with_progress(repo_id, filename, local_dir)
+
+# 主下载函数
+def download(repo_id, filename, local_dir, repo_type=None, use_wget=False):
+    if use_wget:
+        download_with_wget_progress(repo_id, filename, local_dir)
+    else:
+        download_with_progress(repo_id, filename, local_dir, repo_type)
+
+# 开始下载所有模型
 MODEL_BASE_PATH = "/workspace/ComfyUI/models"
-download(repo_id="Kijai/WanVideo_comfy", filename="Wan2_1-T2V-14B_fp8_e4m3fn.safetensors", local_dir=f"{MODEL_BASE_PATH}/diffusion_models")
-download(repo_id="Kijai/WanVideo_comfy", filename="Wan2_1-VACE_module_14B_bf16.safetensors", local_dir=f"{MODEL_BASE_PATH}/diffusion_models")
-download(repo_id="Comfy-Org/Wan_2.1_ComfyUI_repackaged", filename="split_files/clip_vision/clip_vision_h.safetensors", local_dir=f"{MODEL_BASE_PATH}/clip_vision")
-download(repo_id="Kijai/WanVideo_comfy", filename="umt5-xxl-enc-bf16.safetensors", local_dir=f"{MODEL_BASE_PATH}/clip")
-download(repo_id="Kijai/WanVideo_comfy", filename="Wan2_1_VAE_bf16.safetensors", local_dir=f"{MODEL_BASE_PATH}/vae")
-download(repo_id="Kijai/WanVideo_comfy", filename="Wan21_CausVid_14B_T2V_lora_rank32.safetensors", local_dir=f"{MODEL_BASE_PATH}/loras")
-download(repo_id="lokCX/4x-Ultrasharp", filename="4x-UltraSharp.pth", local_dir=f"{MODEL_BASE_PATH}/upscale_models")
-download(repo_id="Kijai/WanVideo_comfy", filename="Skyreels/Wan2_1-SkyReels-V2-DF-14B-720P_fp8_e4m3fn.safetensors", local_dir=f"{MODEL_BASE_PATH}/diffusion_models")
-download(repo_id="alibaba-pai/Wan2.1-Fun-Reward-LoRAs", filename="Wan2.1-Fun-14B-InP-MPS.safetensors", local_dir=f"{MODEL_BASE_PATH}/loras")
-download(repo_id="alibaba-pai/Wan2.1-Fun-Reward-LoRAs", filename="Wan2.1-Fun-14B-InP-HPS2.1.safetensors", local_dir=f"{MODEL_BASE_PATH}/loras")
+
+print("⬇️ [任务B] 开始批量下载模型文件...")
+print("⬇️ [任务B] 注意: 大文件下载可能需要较长时间，请耐心等待...")
+
+# 下载模型列表
+models = [
+    ("Kijai/WanVideo_comfy", "Wan2_1-T2V-14B_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
+    ("Kijai/WanVideo_comfy", "Wan2_1-VACE_module_14B_bf16.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
+    ("Comfy-Org/Wan_2.1_ComfyUI_repackaged", "split_files/clip_vision/clip_vision_h.safetensors", f"{MODEL_BASE_PATH}/clip_vision"),
+    ("Kijai/WanVideo_comfy", "umt5-xxl-enc-bf16.safetensors", f"{MODEL_BASE_PATH}/clip"),
+    ("Kijai/WanVideo_comfy", "Wan2_1_VAE_bf16.safetensors", f"{MODEL_BASE_PATH}/vae"),
+    ("Kijai/WanVideo_comfy", "Wan21_CausVid_14B_T2V_lora_rank32.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("lokCX/4x-Ultrasharp", "4x-UltraSharp.pth", f"{MODEL_BASE_PATH}/upscale_models"),
+    ("Kijai/WanVideo_comfy", "Skyreels/Wan2_1-SkyReels-V2-DF-14B-720P_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
+    ("alibaba-pai/Wan2.1-Fun-Reward-LoRAs", "Wan2.1-Fun-14B-InP-MPS.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("alibaba-pai/Wan2.1-Fun-Reward-LoRAs", "Wan2.1-Fun-14B-InP-HPS2.1.safetensors", f"{MODEL_BASE_PATH}/loras"),
+]
+
+# 依次下载每个模型
+for i, (repo_id, filename, local_dir) in enumerate(models, 1):
+    print(f"⬇️ [任务B] [{i}/{len(models)}] 准备下载模型...")
+    download(repo_id, filename, local_dir, use_wget=True)  # 优先使用wget显示进度
+    print(f"⬇️ [任务B] [{i}/{len(models)}] 模型下载任务完成")
+    print("-" * 60)
+
+print("✅⬇️ [任务B] 所有模型下载任务已完成!")
 EOF
     
     python /workspace/download_models.py
