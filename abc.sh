@@ -76,7 +76,7 @@ install_dependencies() {
     echo "📦 [任务A] [特定硬件] 正在为新一代GPU安装PyTorch Nightly版本..."
     pip uninstall -y torch torchvision torchaudio xformers
     pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
-    pip install xformers
+    # pip install xformers
     echo "✅📦 [任务A] 所有依赖安装完毕。"
 }
 
