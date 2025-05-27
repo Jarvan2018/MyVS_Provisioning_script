@@ -187,7 +187,6 @@ models = [
     ("Kijai/WanVideo_comfy", "Wan2_1_VAE_bf16.safetensors", f"{MODEL_BASE_PATH}/vae"),
     ("Kijai/WanVideo_comfy", "Wan21_CausVid_14B_T2V_lora_rank32.safetensors", f"{MODEL_BASE_PATH}/loras"),
     ("lokCX/4x-Ultrasharp", "4x-UltraSharp.pth", f"{MODEL_BASE_PATH}/upscale_models"),
-    ("Kijai/WanVideo_comfy", "Skyreels/Wan2_1-SkyReels-V2-DF-14B-720P_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
     ("alibaba-pai/Wan2.1-Fun-Reward-LoRAs", "Wan2.1-Fun-14B-InP-MPS.safetensors", f"{MODEL_BASE_PATH}/loras"),
     ("alibaba-pai/Wan2.1-Fun-Reward-LoRAs", "Wan2.1-Fun-14B-InP-HPS2.1.safetensors", f"{MODEL_BASE_PATH}/loras"),
 ]
