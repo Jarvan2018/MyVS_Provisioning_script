@@ -45,6 +45,8 @@ git clone --depth 1 https://github.com/pythongosssss/ComfyUI-Custom-Scripts
 git clone --depth 1 https://github.com/kaibioinfo/ComfyUI_AdvancedRefluxControl.git
 git clone --depth 1 https://github.com/ostris/ComfyUI-Advanced-Vision
 git clone --depth 1 https://github.com/cubiq/ComfyUI_essentials
+git clone --depth 1 https://github.com/kijai/ComfyUI-DepthAnythingV2
+git clone --depth 1 https://github.com/chrisgoringe/cg-use-everywhere
 
 echo "  - 正在 ComfyUI 内部创建模型目录..."
 mkdir -p /workspace/ComfyUI/models/{controlnet,animatediff_models,animatediff_motion_lora,loras,CogVideo/loras,clip,LLM,checkpoints,upscale_models,vae,clip_vision,diffusion_models,models/style_models}
@@ -222,31 +224,31 @@ echo "✅ [3/5] 所有并行任务均已完成。"
 
 
 # --- 步骤 4: 配置 Supervisor 服务 ---
-echo "▶️ [4/5] 正在配置 Supervisor 以启动并守护 ComfyUI..."
-cat <<EOF > /opt/supervisor-scripts/comfyui.sh
-#!/bin/bash
-if [ -f "/venv/main/bin/activate" ]; then . /venv/main/bin/activate; fi
-cd /workspace/ComfyUI
-python main.py --listen --port 6760 --preview-method auto
-EOF
-chmod +x /opt/supervisor-scripts/comfyui.sh
+# echo "▶️ [4/5] 正在配置 Supervisor 以启动并守护 ComfyUI..."
+# cat <<EOF > /opt/supervisor-scripts/comfyui.sh
+# #!/bin/bash
+# if [ -f "/venv/main/bin/activate" ]; then . /venv/main/bin/activate; fi
+# cd /workspace/ComfyUI
+# python main.py --listen --port 6760 --preview-method auto
+# EOF
+# chmod +x /opt/supervisor-scripts/comfyui.sh
 
-cat <<EOF > /etc/supervisor/conf.d/comfyui.conf
-[program:comfyui]
-command=/opt/supervisor-scripts/comfyui.sh
-autostart=true; autorestart=true
-stderr_logfile=/var/log/comfyui.err.log; stdout_logfile=/var/log/comfyui.out.log
-user=root
-EOF
-echo "✅ Supervisor 配置完毕。"
+# cat <<EOF > /etc/supervisor/conf.d/comfyui.conf
+# [program:comfyui]
+# command=/opt/supervisor-scripts/comfyui.sh
+# autostart=true; autorestart=true
+# stderr_logfile=/var/log/comfyui.err.log; stdout_logfile=/var/log/comfyui.out.log
+# user=root
+# EOF
+# echo "✅ Supervisor 配置完毕。"
 
 
-# --- 步骤 5: 集成Vast.ai门户并重载服务 ---
-echo "▶️ [5/5] 正在集成 ComfyUI 到 Vast.ai 门户并应用所有更改..."
-COMFYUI_PORTAL_ENTRY="  - 'localhost:6760:16760:/:ComfyUI'"
-echo "${COMFYUI_PORTAL_ENTRY}" >> /etc/portal.yaml
+# # --- 步骤 5: 集成Vast.ai门户并重载服务 ---
+# echo "▶️ [5/5] 正在集成 ComfyUI 到 Vast.ai 门户并应用所有更改..."
+# COMFYUI_PORTAL_ENTRY="  - 'localhost:6760:16760:/:ComfyUI'"
+# echo "${COMFYUI_PORTAL_ENTRY}" >> /etc/portal.yaml
 
-supervisorctl reload
+# supervisorctl reload
 
 echo ""
 echo "🎉🚀 所有配置已完成！ComfyUI 服务正在后台启动。"
