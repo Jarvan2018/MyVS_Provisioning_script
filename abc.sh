@@ -44,6 +44,7 @@ git clone --depth 1 https://github.com/kijai/ComfyUI-WanVideoWrapper
 git clone --depth 1 https://github.com/pythongosssss/ComfyUI-Custom-Scripts
 git clone --depth 1 https://github.com/kaibioinfo/ComfyUI_AdvancedRefluxControl.git
 git clone --depth 1 https://github.com/ostris/ComfyUI-Advanced-Vision
+git clone --depth 1 https://github.com/cubiq/ComfyUI_essentials
 
 echo "  - 正在 ComfyUI 内部创建模型目录..."
 mkdir -p /workspace/ComfyUI/models/{controlnet,animatediff_models,animatediff_motion_lora,loras,CogVideo/loras,clip,LLM,checkpoints,upscale_models,vae,clip_vision,diffusion_models,models/style_models}
