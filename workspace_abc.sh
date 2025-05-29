@@ -23,6 +23,7 @@ source /workspace/venv/bin/activate
 
 
 pip install --upgrade pip
+pip install huggingface_hub
 echo "✅ Pip 已更新。"
 
 
