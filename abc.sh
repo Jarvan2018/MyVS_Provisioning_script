@@ -23,6 +23,8 @@ else
     echo "⚠️ 未找到虚拟环境，将使用系统Python。"
 fi
 pip install --upgrade pip
+pip install huggingface_hub
+
 echo "✅ Pip 已更新。"
 
 
