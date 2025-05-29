@@ -23,7 +23,7 @@ else
     echo "⚠️ 未找到虚拟环境，将使用系统Python。"
 fi
 pip install --upgrade pip
-pip install huggingface_hub
+pip install huggingface_hub tqdm
 
 echo "✅ Pip 已更新。"
 
@@ -60,8 +60,7 @@ echo "✅ 工作区准备完毕。"
 # 任务 A: 安装所有Python依赖
 install_dependencies() {
     echo "📦 [任务A] 开始安装 Python 依赖..."
-    # 安装一个基础包，以防下载脚本需要
-    pip install huggingface_hub tqdm
+    
     
     cd /workspace/ComfyUI
     echo "📦 [任务A] 正在安装 ComfyUI 核心依赖..."
@@ -186,7 +185,6 @@ print("⬇️ [任务B] 注意: 大文件下载可能需要较长时间，请耐
 models = [
     ("Kijai/WanVideo_comfy", "Wan2_1-T2V-14B_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
     ("Kijai/WanVideo_comfy", "Wan2_1-VACE_module_14B_bf16.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
-    ("Comfy-Org/Wan_2.1_ComfyUI_repackaged", "split_files/clip_vision/clip_vision_h.safetensors", f"{MODEL_BASE_PATH}/clip_vision"),
     ("Kijai/WanVideo_comfy", "umt5-xxl-enc-bf16.safetensors", f"{MODEL_BASE_PATH}/clip"),
     ("Kijai/WanVideo_comfy", "Wan2_1_VAE_bf16.safetensors", f"{MODEL_BASE_PATH}/vae"),
     ("Kijai/WanVideo_comfy", "Wan21_CausVid_14B_T2V_lora_rank32.safetensors", f"{MODEL_BASE_PATH}/loras"),
@@ -198,7 +196,7 @@ models = [
 # 依次下载每个模型
 for i, (repo_id, filename, local_dir) in enumerate(models, 1):
     print(f"⬇️ [任务B] [{i}/{len(models)}] 准备下载模型...")
-    download(repo_id, filename, local_dir, use_wget=True)  # 优先使用wget显示进度
+    download(repo_id, filename, local_dir)
     print(f"⬇️ [任务B] [{i}/{len(models)}] 模型下载任务完成")
     print("-" * 60)
 
