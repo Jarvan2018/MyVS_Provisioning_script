@@ -192,7 +192,10 @@ models = [
     ("Kijai/WanVideo_comfy", "Wan21_CausVid_14B_T2V_lora_rank32.safetensors", f"{MODEL_BASE_PATH}/loras"),
     ("Kijai/WanVideo_comfy", "Wan21_T2V_14B_MoviiGen_lora_rank32_fp16.safetensors", f"{MODEL_BASE_PATH}/loras"),
     ("Kijai/WanVideo_comfy", "Wan2.1-Fun-14B-InP-MPS.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("Kijai/WanVideo_comfy", "Wan21_AccVid_T2V_14B_lora_rank32_fp16.safetensors", f"{MODEL_BASE_PATH}/loras"),
     ("Kijai/WanVideo_comfy", "Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("vrgamedevgirl84/Wan14BT2VFusioniX", "OtherLoRa's/DetailEnhancerV1.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("vrgamedevgirl84/Wan14BT2VFusioniX", "OtherLoRa's/Wan14B_RealismBoost.safetensors", f"{MODEL_BASE_PATH}/loras"),
     ("Kim2091/UltraSharpV2", "4x-UltraSharpV2.safetensors", f"{MODEL_BASE_PATH}/upscale_models"),
 ]
 
