@@ -184,11 +184,15 @@ print("⬇️ [任务B] 注意: 大文件下载可能需要较长时间，请耐
 
 # 下载模型列表
 models = [
-    ("vrgamedevgirl84/Wan14BT2V_MasterModel", "WanT2V_MasterModel.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
+    ("Kijai/WanVideo_comfy", "Wan2_1-T2V-14B_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
+    ("Kijai/WanVideo_comfy", "Phantom-Wan-14B_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
     ("Kijai/WanVideo_comfy", "Wan2_1-VACE_module_14B_bf16.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
     ("Kijai/WanVideo_comfy", "umt5-xxl-enc-bf16.safetensors", f"{MODEL_BASE_PATH}/clip"),
     ("Kijai/WanVideo_comfy", "Wan2_1_VAE_bf16.safetensors", f"{MODEL_BASE_PATH}/vae"),
     ("Kijai/WanVideo_comfy", "Wan21_CausVid_14B_T2V_lora_rank32.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("Kijai/WanVideo_comfy", "Wan21_T2V_14B_MoviiGen_lora_rank32_fp16.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("Kijai/WanVideo_comfy", "Wan2.1-Fun-14B-InP-MPS.safetensors", f"{MODEL_BASE_PATH}/loras"),
+    ("Kijai/WanVideo_comfy", "Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors", f"{MODEL_BASE_PATH}/loras"),
     ("Kim2091/UltraSharpV2", "4x-UltraSharpV2.safetensors", f"{MODEL_BASE_PATH}/upscale_models"),
 ]
 
