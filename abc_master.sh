@@ -50,6 +50,7 @@ git clone --depth 1 https://github.com/cubiq/ComfyUI_essentials
 git clone --depth 1 https://github.com/kijai/ComfyUI-DepthAnythingV2
 git clone --depth 1 https://github.com/chrisgoringe/cg-use-everywhere
 git clone --depth 1 https://github.com/Fannovel16/comfyui_controlnet_aux
+git clone --depth 1 https://github.com/yolain/ComfyUI-Easy-Use.git
 
 echo "  - 正在 ComfyUI 内部创建模型目录..."
 mkdir -p /workspace/ComfyUI/models/{controlnet,animatediff_models,animatediff_motion_lora,loras,CogVideo/loras,clip,LLM,checkpoints,upscale_models,vae,clip_vision,diffusion_models,models/style_models}
