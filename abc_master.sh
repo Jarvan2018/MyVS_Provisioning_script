@@ -184,8 +184,8 @@ print("⬇️ [任务B] 开始批量下载模型文件...")
 print("⬇️ [任务B] 注意: 大文件下载可能需要较长时间，请耐心等待...")
 
 # 下载模型列表
+# ("Kijai/WanVideo_comfy", "Wan2_1-T2V-14B_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
 models = [
-    ("Kijai/WanVideo_comfy", "Wan2_1-T2V-14B_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
     ("Kijai/WanVideo_comfy", "Phantom-Wan-14B_fp8_e4m3fn.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
     ("Kijai/WanVideo_comfy", "Wan2_1-VACE_module_14B_bf16.safetensors", f"{MODEL_BASE_PATH}/diffusion_models"),
     ("Kijai/WanVideo_comfy", "umt5-xxl-enc-bf16.safetensors", f"{MODEL_BASE_PATH}/clip"),
